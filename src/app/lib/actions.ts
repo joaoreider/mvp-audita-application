@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import paths from "@/paths";
 
-const secretKey = "secret";
+const secretKey = process.env.JWT_SECRET;
 const key = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: any) {
@@ -57,6 +57,7 @@ export async function updateSession(request: NextRequest) {
 }
 
 export async function login(email: string, password: string) {
+  console.log(secretKey);
   await new Promise((resolve) => setTimeout(resolve, 200));
   const result = await authenticate(email, password);
   if (result.error) {
