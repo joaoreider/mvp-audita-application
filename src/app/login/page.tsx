@@ -1,9 +1,10 @@
-import { Metadata } from "next";
+// 'use client'
+// import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Login",
-  description: "Login to your account",
-};
+// export const metadata: Metadata = {
+//   title: "Login",
+//   description: "Login to your account",
+// };
 
 export default function LoginPage() {
   return (
