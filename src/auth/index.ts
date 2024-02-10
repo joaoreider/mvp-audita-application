@@ -50,7 +50,7 @@ export async function createUser(data: RegisterData): Promise<ActionReturn> {
     });
     return {};
   } catch (error) {
-    console.log("createUser error", error);
+    console.log("Error on createUser", error);
     return {
       error: "Erro interno do sistema",
     };

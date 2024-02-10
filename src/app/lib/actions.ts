@@ -15,7 +15,7 @@ import paths from "@/paths";
 // }
 
 export async function register(data: RegisterData): Promise<ActionReturn> {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await new Promise((resolve) => setTimeout(resolve, 500));
   const result = await createUser(data);
   if (result.error) {
     return result;
