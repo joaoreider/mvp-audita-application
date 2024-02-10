@@ -4,22 +4,35 @@ import type { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { ActionReturn } from "./types";
 
-// export async function signIn(formData: FormData) {
-//   const { username, password } = formData;
-//   const user = await findByEmail(username);
+export async function authenticate(
+  email: string,
+  password: string
+): Promise<ActionReturn> {
+  const user = await findByEmail(email);
 
-//   if (user) {
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (user) {
+    if (user.isActive) {
+      const isPasswordValid = await bcrypt.compare(password, user.password);
 
-//     if (isPasswordValid) {
-//       return {
-//         ...user,
-//         password: undefined,
-//       };
-//     }
-//   }
-//   throw new Error("Credenciais inválidas");
-// }
+      if (isPasswordValid) {
+        return {
+          data: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+          },
+        };
+      }
+    } else {
+      return {
+        error: "Seu cadastro não está ativo",
+      };
+    }
+  }
+  return {
+    error: "Email ou senha inválidos",
+  };
+}
 
 async function findByEmail(email: string): Promise<User | null> {
   const user = await db.user.findUnique({
