@@ -2,6 +2,7 @@ import { RegisterData } from "@/app/lib/types";
 import { db } from "../db";
 import type { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
+import { ActionReturn } from "./types";
 
 // export async function signIn(formData: FormData) {
 //   const { username, password } = formData;
@@ -29,10 +30,12 @@ async function findByEmail(email: string): Promise<User | null> {
   return user;
 }
 
-export async function createUser(data: RegisterData): Promise<void | string> {
+export async function createUser(data: RegisterData): Promise<ActionReturn> {
   const userExists = await findByEmail(data.email);
   if (userExists) {
-    return "Email já cadastrado";
+    return {
+      error: "Usuário já cadastrado",
+    };
   }
 
   const { password, ...userData } = data;
@@ -45,7 +48,11 @@ export async function createUser(data: RegisterData): Promise<void | string> {
         role: "user",
       },
     });
+    return {};
   } catch (error) {
-    throw error;
+    console.log("createUser error", error);
+    return {
+      error: "Erro interno do sistema",
+    };
   }
 }

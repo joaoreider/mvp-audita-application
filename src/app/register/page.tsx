@@ -13,6 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { register } from "../lib/actions";
+import { LoadingSpinner } from "@/components/spinner";
+import { useState } from "react";
 
 const formSchema = z
   .object({
@@ -29,6 +31,8 @@ const formSchema = z
   });
 
 export default function RegisterPage() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,13 +41,16 @@ export default function RegisterPage() {
       password: "",
     },
   });
-  let generalErrors = "";
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
     const { passwordConfirm, ...data } = values;
-    const result = register(data);
-    if (result instanceof Error) {
-      generalErrors = result.message;
+    const result = await register(data);
+    setIsLoading(false);
+    if (result?.error) {
+      setErrorMessage(result.error);
+      return;
     }
+    //TODO: Toast register success
   };
   return (
     <div className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -60,7 +67,7 @@ export default function RegisterPage() {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nome" {...field} />
+                    <Input placeholder="João Paulo" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -75,7 +82,11 @@ export default function RegisterPage() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Email" type="email" {...field} />
+                    <Input
+                      placeholder="joao@exemplo.com"
+                      type="email"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -116,11 +127,11 @@ export default function RegisterPage() {
               );
             }}
           />
-          <Button className="w-full" type="submit">
-            Cadastrar
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? <LoadingSpinner /> : "Cadastrar"}
           </Button>
-          {generalErrors && (
-            <p className="text-red-500 text-sm text-center">{generalErrors}</p>
+          {errorMessage && (
+            <p className="text-red-500 text-sm text-center">{errorMessage}</p>
           )}
         </form>
       </Form>

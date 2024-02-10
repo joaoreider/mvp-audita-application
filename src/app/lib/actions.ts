@@ -2,6 +2,7 @@
 
 import { createUser } from "@/auth";
 import { RegisterData } from "./types";
+import { ActionReturn } from "@/auth/types";
 import { redirect } from "next/navigation";
 import paths from "@/paths";
 
@@ -13,10 +14,10 @@ import paths from "@/paths";
 //   }
 // }
 
-export async function register(data: RegisterData) {
+export async function register(data: RegisterData): Promise<ActionReturn> {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
   const result = await createUser(data);
-  if (result) {
-    console.log("createUser error", result);
+  if (result.error) {
     return result;
   }
   redirect(paths.login);
