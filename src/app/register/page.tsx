@@ -75,7 +75,7 @@ export default function RegisterPage() {
         <div className="flex w-full flex-col justify-center space-y-6 sm:w-[350px]  p-10 m-auto">
           <div className="flex flex-col space-y-2 text-center items-center">
             <div className="mb-2">
-              <Image src={Logo} width={50} height={50} alt="logo" />
+              <Image src={Logo} width={100} height={100} alt="logo" />
             </div>
             <h1 className="text-3xl font-semibold tracking-tight">
               Criar uma conta

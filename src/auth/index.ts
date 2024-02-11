@@ -9,7 +9,6 @@ export async function authenticate(
   password: string
 ): Promise<ActionReturn> {
   const user = await findByEmail(email);
-
   if (user) {
     if (user.isActive) {
       const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -28,6 +27,10 @@ export async function authenticate(
         error: "Seu cadastro não está ativo",
       };
     }
+  } else {
+    return {
+      error: "Usuário não cadastrado",
+    };
   }
   return {
     error: "Email ou senha inválidos",
