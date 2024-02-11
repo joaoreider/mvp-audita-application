@@ -49,7 +49,7 @@ export default function LoginPage() {
     }
     toast({
       description: "Seja bem-vindo!",
-      duration: 1500,
+      duration: 700,
     });
   };
   return (

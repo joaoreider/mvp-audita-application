@@ -16,7 +16,6 @@ export default function Navbar() {
       <div className="flex-shrink-0">
         <form
           action={async () => {
-            "use server";
             await logout();
           }}
         >

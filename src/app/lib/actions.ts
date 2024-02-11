@@ -29,16 +29,16 @@ export async function decrypt(input: string): Promise<any> {
 export async function getSession() {
   const session = cookies().get("session")?.value;
   if (!session) {
-    redirect(paths.login);
+    return null;
   }
   try {
     const data = await decrypt(session);
     if (data.expires < new Date()) {
-      redirect(paths.login);
+      return null;
     }
     return data;
   } catch (e) {
-    redirect(paths.login);
+    return null;
   }
 }
 
