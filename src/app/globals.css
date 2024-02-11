@@ -56,4 +56,16 @@
   body {
     @apply bg-background text-foreground;
   }
+  .container {
+    @apply flex flex-col justify-center items-center max-w-[600px] h-[400px] shadow   mx-auto  my-5 rounded-sm m-0;
+    transition: box-shadow 0.3s ease-in-out, border 0.3s ease-in-out;
+  }
+
+  .wrapper {
+    @apply w-full items-center justify-center p-2.5 rounded-[5px];
+  }
+
+  .wrapper form {
+    @apply h-[167px] flex items-center justify-center flex-col mx-0 my-[30px] rounded-[5px] border-2 border-dashed hover:bg-slate-900;
+  }
 }

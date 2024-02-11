@@ -4,6 +4,7 @@ import { getSession } from "./lib/actions";
 import { useEffect, useState } from "react";
 import { ClimbingBoxLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
+import Uploader from "@/components/uploader";
 
 export default function Home() {
   const router = useRouter();
@@ -36,10 +37,12 @@ export default function Home() {
     return (
       <main className="flex min-h-screen flex-col items-center m-0">
         <Navbar />
-        <div className="border m-8 p-4">
-          <pre>{JSON.stringify(session, null, 2)}</pre>
+        <div className="w-full sm:w-1/2 md:w-1/3 items-center justify-center rounded-md border m-12 p-2  shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)]">
+          <Uploader />
         </div>
       </main>
     );
   }
+}
+{
 }
