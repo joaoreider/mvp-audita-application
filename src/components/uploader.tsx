@@ -1,6 +1,7 @@
 import { FaUpload } from "react-icons/fa6";
-import { Input } from "./ui/input";
 import FileItem from "./file-item";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 export default function Uploader() {
   return (
     <div className="container">
@@ -23,13 +24,18 @@ export default function Uploader() {
           </label>
         </form>
       </div>
-      <div className="files">
-        <FileItem />
-        <FileItem />
-        <FileItem />
-        <FileItem />
-        <FileItem />
-      </div>
+      <ScrollArea className="w-full">
+        <div className="flex flex-col overflow-y-auto max-h-[400px] p-2 w-full items-center justify-center">
+          <FileItem />
+          <Separator className="my-2" />
+          {/* <Separator className="my-2" />
+          <FileItem />
+          <Separator className="my-2" />
+          <FileItem />
+          <Separator className="my-2" />
+          <FileItem /> */}
+        </div>
+      </ScrollArea>
     </div>
   );
 }
