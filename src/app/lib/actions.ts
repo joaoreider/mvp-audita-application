@@ -31,11 +31,15 @@ export async function getSession() {
   if (!session) {
     redirect(paths.login);
   }
-  const data = await decrypt(session);
-  if (data.expires < new Date()) {
+  try {
+    const data = await decrypt(session);
+    if (data.expires < new Date()) {
+      redirect(paths.login);
+    }
+    return data;
+  } catch (e) {
     redirect(paths.login);
   }
-  return data;
 }
 
 export async function updateSession(request: NextRequest) {
