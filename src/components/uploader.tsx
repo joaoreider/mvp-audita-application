@@ -11,7 +11,11 @@ type FileUploaded = {
   size: number;
 };
 
-export default function Uploader() {
+type UploaderProps = {
+  url: string;
+};
+
+export default function Uploader({ url }: UploaderProps) {
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
   const [fileProgress, setFileProgress] = useState<{ [key: string]: number }>(
     {}
@@ -72,27 +76,35 @@ export default function Uploader() {
     }
   };
 
-  const mockProgress = (progress: number) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(progress);
-      }, 300);
-    });
-  };
-
-  const mockFileUploadHandler = async (file: File) => {
-    let progress = 0;
-    while (progress < 100) {
-      progress += 10;
-      setFileProgress((prev) => ({ ...prev, [file.name]: progress }));
-      await mockProgress(progress);
-    }
-    setFileStatus((prev) => ({ ...prev, [file.name]: "ok" }));
-  };
-
-  const fileUploadHandler = async (file: File) => {
+  const fileUploadHandler = (file: File) => {
     try {
-      await mockFileUploadHandler(file);
+      // Setup the form data to send
+      const formData = new FormData();
+      formData.append("files", file);
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", url, true);
+
+      // Upload progress
+      xhr.upload.addEventListener("progress", (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded / event.total) * 100);
+          setFileProgress((prev) => ({ ...prev, [file.name]: progress }));
+        }
+      });
+
+      // File uploaded
+      xhr.addEventListener("readystatechange", () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 201) {
+            setFileStatus((prev) => ({ ...prev, [file.name]: "ok" }));
+          } else {
+            setFileStatus((prev) => ({ ...prev, [file.name]: "error" }));
+            console.error("Error uploading file: ", xhr.responseText);
+          }
+        }
+      });
+
+      xhr.send(formData);
     } catch (error) {
       setFileStatus((prev) => ({ ...prev, [file.name]: "error" }));
     }
@@ -134,6 +146,7 @@ export default function Uploader() {
               className="hidden"
               ref={fileInputRef}
               disabled={!canUpload}
+              accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             />
           </label>
         </form>
