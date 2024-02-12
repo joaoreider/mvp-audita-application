@@ -10,6 +10,8 @@ import { SessionData } from "./lib/types";
 
 export default function Home() {
   const router = useRouter();
+  const UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL + "/files/upload";
+
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<SessionData | null>(null);
 
@@ -41,7 +43,7 @@ export default function Home() {
       <main className="flex min-h-screen flex-col items-center m-0">
         <Navbar />
         <div className="w-full sm:w-1/2 md:w-1/3 flex flex-col items-center justify-center rounded-md border m-12 p-2  shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)]">
-          <Uploader />
+          <Uploader url={UPLOAD_URL} />
         </div>
         <SubmitButton />
       </main>

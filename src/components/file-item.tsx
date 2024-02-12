@@ -48,7 +48,7 @@ export default function FileItem({
   };
 
   return (
-    <div className="flex items-center justify-between w-full max-w-[70%] px-4 py-2 border-2 rounded m-2">
+    <div className="flex flex-row items-center justify-between w-full max-w-[70%] px-4 py-2 border-2 rounded m-2">
       <div className="flex items-center">
         {icons[status] || <FaFileCircleCheck />}
       </div>
