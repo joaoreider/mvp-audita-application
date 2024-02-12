@@ -1,7 +1,7 @@
 "use server";
 import { SignJWT, jwtVerify } from "jose";
 import { authenticate, createUser } from "@/auth";
-import { RegisterData } from "./types";
+import { RegisterData, SessionData } from "./types";
 import { ActionReturn } from "@/auth/types";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
@@ -26,7 +26,7 @@ export async function decrypt(input: string): Promise<any> {
   return payload;
 }
 
-export async function getSession() {
+export async function getSession(): Promise<SessionData | null> {
   const session = cookies().get("session")?.value;
   if (!session) {
     return null;
