@@ -5,13 +5,13 @@ import {
   FaFileCircleCheck,
   FaFileCircleExclamation,
 } from "react-icons/fa6";
+import { Progress } from "./ui/progress";
 interface FileItemProps {
   name: string;
   status: boolean;
   size: number;
   onDelete: () => void;
-  // progress: number;
-  // onRemove: (name: string) => void;
+  progress: number;
 }
 
 export default function FileItem({
@@ -19,6 +19,7 @@ export default function FileItem({
   status,
   size,
   onDelete,
+  progress,
 }: FileItemProps) {
   const prettifySize = (size: number) => {
     if (size < 1024) {
@@ -53,6 +54,11 @@ export default function FileItem({
           {prettySize}
         </span>
       </div>
+      {progress ? (
+        <div className="flex items-center w-full  max-w-[30%]">
+          <Progress value={progress} className="bg-secondary" />
+        </div>
+      ) : null}
       <div className="flex items-center">
         <FaRegTrashCan className="cursor-pointer" onClick={onDelete} />
       </div>
