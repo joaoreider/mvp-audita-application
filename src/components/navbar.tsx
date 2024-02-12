@@ -12,7 +12,7 @@ export default function Navbar() {
         </a>
       </div>
       <div className="mx-auto">
-        <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-5xl dark:text-white">
+        <h1 className="mb-4 text-4xl sm:text-3xl md:text-2xl lg:text-1xl font-extrabold leading-none tracking-tight text-gray-900  lg:text-5xl dark:text-white">
           Inovação em{" "}
           <span className="italic underline underline-offset-3 decoration decoration-custom-blue">
             Auditoria
