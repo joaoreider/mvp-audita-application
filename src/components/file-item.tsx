@@ -9,7 +9,7 @@ interface FileItemProps {
   name: string;
   status: boolean;
   size: number;
-  // onDelete: () => void;
+  onDelete: () => void;
   // progress: number;
   // onRemove: (name: string) => void;
 }
@@ -18,8 +18,8 @@ export default function FileItem({
   name,
   status,
   size,
-}: // onDelete,
-FileItemProps) {
+  onDelete,
+}: FileItemProps) {
   const prettifySize = (size: number) => {
     if (size < 1024) {
       return `${size} B`;
@@ -54,7 +54,7 @@ FileItemProps) {
         </span>
       </div>
       <div className="flex items-center">
-        {/* <FaRegTrashCan className="cursor-pointer" onClick={onDelete} /> */}
+        <FaRegTrashCan className="cursor-pointer" onClick={onDelete} />
       </div>
     </div>
   );

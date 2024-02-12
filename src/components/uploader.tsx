@@ -2,63 +2,59 @@
 import { FaUpload } from "react-icons/fa6";
 import FileItem from "./file-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "./ui/use-toast";
 
 export default function Uploader() {
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [fileStatus, setFileStatus] = useState<{ [key: string]: string }>({});
-  const [fileProgress, setFileProgress] = useState<{ [key: string]: number }>(
-    {}
-  );
-  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
-  const [canUpload, setCanUpload] = useState<boolean>(true);
 
+  const [canUpload, setCanUpload] = useState<boolean>(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const maxFileSize = 5;
   const MAX_FILE_BYTES = maxFileSize * 1024 * 1024; // 5MB to bytes
 
-  // const handleDelete = (id: number) => {
-  //   setUploadedFiles(uploadedFiles.filter((item) => item.id !== id));
-  // };
+  useEffect(() => {
+    setCanUpload(uploadedFiles.length < 5);
+  }, [uploadedFiles]);
+
+  const handleDelete = (name: string) => {
+    setUploadedFiles(uploadedFiles.filter((item) => item.name !== name));
+  };
+
+  const fileAlreadyUploaded = (file: File) => {
+    return uploadedFiles.some((f) => f.name === file.name);
+  };
+
+  const verifyIfCanUpload = (file: File) => {
+    if (file.size > MAX_FILE_BYTES) {
+      console.log("Arquivo muito grande");
+      toast({
+        variant: "destructive",
+        description: `Tamanho máximo de arquivo permitido: ${maxFileSize} MB`,
+      });
+      return false;
+    }
+    if (fileAlreadyUploaded(file)) {
+      console.log("Arquivo já carregado");
+      toast({
+        description: "Esse arquivo já foi carregado",
+      });
+      return false;
+    }
+    if (uploadedFiles.length >= 5) {
+      console.log("Limite de arquivos atingido");
+      return false;
+    }
+    return true;
+  };
 
   const fileSelectedHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    setUploadError(null); // reset the upload error when a new file is selected
     if (event.target.files) {
       const files = Array.from(event.target.files);
-      let isValid = true; // Flag to check if all files are valid
-      let fileErrors: { [key: string]: string } = {};
-      if (files.length + uploadedFiles.length >= 5) {
-        setCanUpload(false);
-        isValid = false;
-      }
       for (const file of files) {
-        if (file.size > MAX_FILE_BYTES) {
-          fileErrors[
-            file.name
-          ] = `Tamanho máximo de arquivo permitido: ${maxFileSize} MB`;
-          isValid = false;
-          toast({
-            variant: "destructive",
-            description: `Tamanho máximo de arquivo permitido: ${maxFileSize} MB`,
-          });
+        if (verifyIfCanUpload(file)) {
+          setUploadedFiles([...uploadedFiles, file]);
         }
-      }
-      if (!isValid) {
-        console.log("Erro nos arquivos: ", fileErrors);
-        setFileStatus(fileErrors);
-      } else {
-        files.forEach((file) => {
-          setFileProgress((prev) => ({ ...prev, [file.name]: 0 }));
-          setUploadedFiles((prevFiles) => [
-            ...prevFiles,
-            ...(event.target.files ? Array.from(event.target.files) : []),
-          ]);
-          //TODO: Enviar o arquivo para o servidor
-          // fileUploadHandler(file);
-        });
       }
     }
   };
@@ -78,7 +74,11 @@ export default function Uploader() {
               <FaUpload size={42} color="white" className="mb-4" />
               {canUpload ? (
                 <span className="leading-7  text-muted-foreground">
-                  Clique para carregar (5 arquivos no máximo, 5MB cada)
+                  Faça o upload de até{" "}
+                  {5 - uploadedFiles.length === 1
+                    ? `1 arquivo `
+                    : `${5 - uploadedFiles.length} arquivos `}
+                  (5MB cada)
                 </span>
               ) : (
                 <span className="leading-7  text-muted-foreground text-red-400">
@@ -86,7 +86,6 @@ export default function Uploader() {
                 </span>
               )}
             </div>
-            {/* {only upload if uploadedFiles.lenght < 5 } */}
 
             <input
               id="dropzone-file"
@@ -112,7 +111,7 @@ export default function Uploader() {
                 name={file.name}
                 status={true}
                 size={file.size}
-                // onDelete={() => handleDelete(file.id)}
+                onDelete={() => handleDelete(file.name)}
               />
             </div>
           ))}
@@ -120,11 +119,4 @@ export default function Uploader() {
       </ScrollArea>
     </div>
   );
-}
-{
-  /* <FileItem
-file={file}
-status={fileStatus[file.name]}
-progress={fileProgress[file.name]}
-/> */
 }
