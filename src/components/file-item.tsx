@@ -6,9 +6,10 @@ import {
   FaFileCircleExclamation,
 } from "react-icons/fa6";
 import { Progress } from "./ui/progress";
+import { Status } from "./uploader";
 interface FileItemProps {
   name: string;
-  status: boolean;
+  status: Status;
   size: number;
   onDelete: () => void;
   progress: number;
@@ -38,27 +39,32 @@ export default function FileItem({
   };
   const prettySize = prettifySize(size);
   const prettyName = prettifyName(name);
+  const showProgress = progress && progress < 100;
+
+  const icons = {
+    ok: <FaFileCircleCheck className="text-green-success" />,
+    pending: <FaFileCircleCheck />,
+    error: <FaFileCircleExclamation className="text-red-400" />,
+  };
 
   return (
     <div className="flex items-center justify-between w-full max-w-[70%] px-4 py-2 border-2 rounded m-2">
       <div className="flex items-center">
-        {status ? (
-          <FaFileCircleCheck className="text-green-success" />
-        ) : (
-          <FaFileCircleExclamation className="text-red-400" />
-        )}
+        {icons[status] || <FaFileCircleCheck />}
       </div>
-      <div className="flex flex-col items-center justify-center">
-        <p className="leading-7 ml-2 text-sm">{prettyName}</p>
-        <span className="text-xs font-medium leading-none text-muted-foreground">
-          {prettySize}
-        </span>
-      </div>
-      {progress ? (
-        <div className="flex items-center w-full  max-w-[30%]">
+      {showProgress ? (
+        <div className="flex items-center w-full  max-w-[40%]">
           <Progress value={progress} className="bg-secondary" />
         </div>
-      ) : null}
+      ) : (
+        <div className="flex flex-col items-center justify-center">
+          <p className="leading-7 ml-2 text-sm">{prettyName}</p>
+          <span className="text-xs font-medium leading-none text-muted-foreground">
+            {prettySize}
+          </span>
+        </div>
+      )}
+
       <div className="flex items-center">
         <FaRegTrashCan className="cursor-pointer" onClick={onDelete} />
       </div>

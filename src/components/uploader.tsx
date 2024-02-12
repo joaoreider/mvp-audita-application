@@ -5,10 +5,20 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "./ui/use-toast";
 
-export default function Uploader() {
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+export type Status = "ok" | "pending" | "error";
+type FileUploaded = {
+  name: string;
+  size: number;
+};
 
+export default function Uploader() {
+  const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
+  const [fileProgress, setFileProgress] = useState<{ [key: string]: number }>(
+    {}
+  );
+  const [fileStatus, setFileStatus] = useState<{ [key: string]: Status }>({});
   const [canUpload, setCanUpload] = useState<boolean>(true);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const maxFileSize = 5;
   const MAX_FILE_BYTES = maxFileSize * 1024 * 1024; // 5MB to bytes
@@ -27,7 +37,6 @@ export default function Uploader() {
 
   const verifyIfCanUpload = (file: File) => {
     if (file.size > MAX_FILE_BYTES) {
-      console.log("Arquivo muito grande");
       toast({
         variant: "destructive",
         description: `Tamanho máximo de arquivo permitido: ${maxFileSize} MB`,
@@ -35,7 +44,6 @@ export default function Uploader() {
       return false;
     }
     if (fileAlreadyUploaded(file)) {
-      console.log("Arquivo já carregado");
       toast({
         description: "Esse arquivo já foi carregado",
       });
@@ -53,9 +61,40 @@ export default function Uploader() {
       const files = Array.from(event.target.files);
       for (const file of files) {
         if (verifyIfCanUpload(file)) {
-          setUploadedFiles([...uploadedFiles, file]);
+          setUploadedFiles((prev) => [
+            ...prev,
+            { name: file.name, size: file.size },
+          ]);
+          setFileProgress((prev) => ({ ...prev, [file.name]: 0 }));
+          fileUploadHandler(file);
         }
       }
+    }
+  };
+
+  const mockProgress = (progress: number) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(progress);
+      }, 300);
+    });
+  };
+
+  const mockFileUploadHandler = async (file: File) => {
+    let progress = 0;
+    while (progress < 100) {
+      progress += 10;
+      setFileProgress((prev) => ({ ...prev, [file.name]: progress }));
+      await mockProgress(progress);
+    }
+    setFileStatus((prev) => ({ ...prev, [file.name]: "ok" }));
+  };
+
+  const fileUploadHandler = async (file: File) => {
+    try {
+      await mockFileUploadHandler(file);
+    } catch (error) {
+      setFileStatus((prev) => ({ ...prev, [file.name]: "error" }));
     }
   };
 
@@ -70,7 +109,7 @@ export default function Uploader() {
             htmlFor="dropzone-file"
             className="flex flex-col items-center justify-center w-full h-64 cursor-pointer"
           >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            <div className="flex flex-col items-center text-center justify-center pt-5 pb-6">
               <FaUpload size={42} color="white" className="mb-4" />
               {canUpload ? (
                 <span className="leading-7  text-muted-foreground">
@@ -81,7 +120,7 @@ export default function Uploader() {
                   (5MB cada)
                 </span>
               ) : (
-                <span className="leading-7  text-muted-foreground text-red-400">
+                <span className="leading-7  text-muted-foreground text-yellow-400">
                   Limite de arquivos atingido
                 </span>
               )}
@@ -102,15 +141,16 @@ export default function Uploader() {
 
       <ScrollArea className="w-full px-10">
         <div className="flex flex-col overflow-y-auto max-h-[400px] p-2 w-full items-center justify-center">
-          {uploadedFiles.map((file, index) => (
+          {uploadedFiles.map((file) => (
             <div
-              key={index}
+              key={file.name}
               className="flex flex-col w-full p-0 m-0 items-center justify-center"
             >
               <FileItem
                 name={file.name}
-                status={true}
                 size={file.size}
+                progress={fileProgress[file.name]}
+                status={fileStatus[file.name]}
                 onDelete={() => handleDelete(file.name)}
               />
             </div>

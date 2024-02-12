@@ -12,6 +12,7 @@ export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<SessionData | null>(null);
+
   useEffect(() => {
     setLoading(true);
     const fetchSession = async () => {
