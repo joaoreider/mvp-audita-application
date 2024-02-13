@@ -66,7 +66,11 @@ export default function FileItem({
       )}
 
       <div className="flex items-center">
-        <FaRegTrashCan className="cursor-pointer" onClick={onDelete} />
+        {status === "ok" ? (
+          <FaRegTrashCan className="text-muted-foreground" />
+        ) : (
+          <FaRegTrashCan className="cursor-pointer" onClick={onDelete} />
+        )}
       </div>
     </div>
   );

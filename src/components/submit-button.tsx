@@ -1,14 +1,23 @@
 import { Button } from "./ui/button";
 
-export default function SubmitButton({ ...rest }) {
+interface SubmitButtonProps {
+  onClick: () => void;
+  className: string;
+  text: string;
+  variant?: "default" | "secondary" | "outline";
+}
+
+export default function SubmitButton({
+  onClick,
+  className,
+  text,
+  variant = "default",
+}: SubmitButtonProps) {
   return (
     <div className="flex items-stretch">
       <div className="self-center flex-1 text-center">
-        <Button
-          {...rest}
-          className=" shadow-xl text-white font-semibold rounded-md px-4  py-6 w-48"
-        >
-          ANALISAR
+        <Button onClick={onClick} className={className} variant={variant}>
+          {text}
         </Button>
       </div>
     </div>

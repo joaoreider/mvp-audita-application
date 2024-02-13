@@ -4,7 +4,18 @@ import FileItem from "./file-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "./ui/use-toast";
-import { set } from "zod";
+import { Button } from "./ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export type Status = "ok" | "pending" | "error";
 type FileUploaded = {
@@ -16,9 +27,15 @@ type FileUploaded = {
 
 type UploaderProps = {
   url: string;
+  analysisCode: string;
+  resetAnalysis: () => void;
 };
 
-export default function Uploader({ url }: UploaderProps) {
+export default function Uploader({
+  url,
+  analysisCode,
+  resetAnalysis,
+}: UploaderProps) {
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
   const [canUpload, setCanUpload] = useState<boolean>(true);
 
@@ -99,6 +116,7 @@ export default function Uploader({ url }: UploaderProps) {
       formData.append("files", file);
       const xhr = new XMLHttpRequest();
       xhr.open("POST", url, true);
+      xhr.setRequestHeader("analysis-code", analysisCode);
 
       // Upload progress
       xhr.upload.addEventListener("progress", (event) => {
@@ -128,8 +146,36 @@ export default function Uploader({ url }: UploaderProps) {
     }
   };
 
+  const handleNewAnalysis = () => {
+    resetAnalysis();
+    setUploadedFiles([]);
+  };
+
   return (
     <div className="container">
+      <AlertDialog>
+        <AlertDialogTrigger>
+          {" "}
+          <Button variant="outline" className="my-1">
+            Nova análise
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Essa ação é definitiva e exclui todos os arquivos carregados.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleNewAnalysis}>
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <div className="wrapper">
         <form
           action="#"

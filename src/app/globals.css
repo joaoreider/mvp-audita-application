@@ -57,7 +57,7 @@
     @apply bg-background text-foreground;
   }
   .container {
-    @apply flex flex-col justify-center items-center max-w-[600px] h-[400px] shadow   mx-auto  my-5 rounded-sm m-0;
+    @apply flex flex-col justify-center items-center max-w-[600px] h-[400px] shadow   mx-auto  my-2 rounded-sm m-0;
     transition: box-shadow 0.3s ease-in-out, border 0.3s ease-in-out;
   }
 
