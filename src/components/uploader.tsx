@@ -4,11 +4,14 @@ import FileItem from "./file-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "./ui/use-toast";
+import { set } from "zod";
 
 export type Status = "ok" | "pending" | "error";
 type FileUploaded = {
   name: string;
   size: number;
+  progress: number;
+  status: Status;
 };
 
 type UploaderProps = {
@@ -17,10 +20,6 @@ type UploaderProps = {
 
 export default function Uploader({ url }: UploaderProps) {
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
-  const [fileProgress, setFileProgress] = useState<{ [key: string]: number }>(
-    {}
-  );
-  const [fileStatus, setFileStatus] = useState<{ [key: string]: Status }>({});
   const [canUpload, setCanUpload] = useState<boolean>(true);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,10 +28,28 @@ export default function Uploader({ url }: UploaderProps) {
 
   useEffect(() => {
     setCanUpload(uploadedFiles.length < 5);
+    console.log("Uploaded files: ", uploadedFiles);
   }, [uploadedFiles]);
 
   const handleDelete = (name: string) => {
     setUploadedFiles(uploadedFiles.filter((item) => item.name !== name));
+  };
+
+  const handleUpdateFile = (
+    file: File,
+    status: Status = "pending",
+    progress: number
+  ) => {
+    handleDelete(file.name);
+    setUploadedFiles((prev) => [
+      ...prev,
+      {
+        name: file.name,
+        size: file.size,
+        progress: progress,
+        status: status,
+      },
+    ]);
   };
 
   const fileAlreadyUploaded = (file: File) => {
@@ -54,7 +71,6 @@ export default function Uploader({ url }: UploaderProps) {
       return false;
     }
     if (uploadedFiles.length >= 5) {
-      console.log("Limite de arquivos atingido");
       return false;
     }
     return true;
@@ -65,11 +81,7 @@ export default function Uploader({ url }: UploaderProps) {
       const files = Array.from(event.target.files);
       for (const file of files) {
         if (verifyIfCanUpload(file)) {
-          setUploadedFiles((prev) => [
-            ...prev,
-            { name: file.name, size: file.size },
-          ]);
-          setFileProgress((prev) => ({ ...prev, [file.name]: 0 }));
+          handleUpdateFile(file, "pending", 0);
           fileUploadHandler(file);
         }
       }
@@ -77,6 +89,10 @@ export default function Uploader({ url }: UploaderProps) {
   };
 
   const fileUploadHandler = (file: File) => {
+    // clear upload reference
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
     try {
       // Setup the form data to send
       const formData = new FormData();
@@ -88,7 +104,9 @@ export default function Uploader({ url }: UploaderProps) {
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable) {
           const progress = Math.round((event.loaded / event.total) * 100);
-          setFileProgress((prev) => ({ ...prev, [file.name]: progress }));
+          progress < 100
+            ? handleUpdateFile(file, "pending", progress)
+            : handleUpdateFile(file, "ok", progress);
         }
       });
 
@@ -96,17 +114,17 @@ export default function Uploader({ url }: UploaderProps) {
       xhr.addEventListener("readystatechange", () => {
         if (xhr.readyState === 4) {
           if (xhr.status === 201) {
-            setFileStatus((prev) => ({ ...prev, [file.name]: "ok" }));
+            handleUpdateFile(file, "ok", 100);
           } else {
-            setFileStatus((prev) => ({ ...prev, [file.name]: "error" }));
             console.error("Error uploading file: ", xhr.responseText);
+            handleUpdateFile(file, "error", 0);
           }
         }
       });
-
       xhr.send(formData);
     } catch (error) {
-      setFileStatus((prev) => ({ ...prev, [file.name]: "error" }));
+      handleUpdateFile(file, "error", 0);
+      console.error("Error uploading file: ", error);
     }
   };
 
@@ -142,7 +160,7 @@ export default function Uploader({ url }: UploaderProps) {
               id="dropzone-file"
               type="file"
               onChange={fileSelectedHandler}
-              multiple={true}
+              multiple={false}
               className="hidden"
               ref={fileInputRef}
               disabled={!canUpload}
@@ -154,20 +172,22 @@ export default function Uploader({ url }: UploaderProps) {
 
       <ScrollArea className="w-full px-10">
         <div className="flex flex-col overflow-y-auto max-h-[400px] p-2 w-full items-center justify-center">
-          {uploadedFiles.map((file) => (
-            <div
-              key={file.name}
-              className="flex flex-col w-full p-0 m-0 items-center justify-center"
-            >
-              <FileItem
-                name={file.name}
-                size={file.size}
-                progress={fileProgress[file.name]}
-                status={fileStatus[file.name]}
-                onDelete={() => handleDelete(file.name)}
-              />
-            </div>
-          ))}
+          {uploadedFiles.map((file, index) => {
+            return (
+              <div
+                key={index}
+                className="flex flex-col w-full p-0 m-0 items-center justify-center"
+              >
+                <FileItem
+                  name={file.name}
+                  size={file.size}
+                  progress={file.progress}
+                  status={file.status}
+                  onDelete={() => handleDelete(file.name)}
+                />
+              </div>
+            );
+          })}
         </div>
       </ScrollArea>
     </div>

@@ -60,7 +60,7 @@ export default function FileItem({
         <div className="flex flex-col items-center justify-center">
           <p className="leading-7 ml-2 text-sm">{prettyName}</p>
           <span className="text-xs font-medium leading-none text-muted-foreground">
-            {prettySize}
+            {size > 0 ? prettySize : ""}
           </span>
         </div>
       )}
