@@ -3,6 +3,9 @@ import Image from "next/image";
 import { logout } from "@/app/lib/actions";
 import { Button } from "./ui/button";
 export default function Navbar() {
+  const handleLogoutClick = async () => {
+    await logout();
+  };
   return (
     // border-b rounded-xl
     <nav className="flex justify-between items-center py-6 px-8 w-full ">
@@ -20,15 +23,9 @@ export default function Navbar() {
         </h1>
       </div>
       <div className="flex-shrink-0">
-        <form
-          action={async () => {
-            await logout();
-          }}
-        >
-          <Button type="submit" variant={"secondary"}>
-            Sair
-          </Button>
-        </form>
+        <Button onClick={handleLogoutClick} variant={"secondary"}>
+          Sair
+        </Button>
       </div>
     </nav>
   );
