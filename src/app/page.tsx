@@ -103,10 +103,6 @@ export default function Home() {
     console.log("Redirecting to report page with data: ", data);
   };
 
-  useEffect(() => {
-    setCanUpload(uploadedFiles.length < 5);
-  }, [uploadedFiles]);
-
   const handleResetAnalysis = () => {
     setAnalysisCode(formatDate(new Date()) + "|" + uuidv4());
     setUploadedFiles([]);
