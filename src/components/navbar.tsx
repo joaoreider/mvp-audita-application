@@ -23,7 +23,7 @@ export default function Navbar() {
         </h1>
       </div>
       <div className="flex-shrink-0">
-        <Button onClick={handleLogoutClick} variant={"secondary"}>
+        <Button onClick={handleLogoutClick} variant={"outline"}>
           Sair
         </Button>
       </div>
