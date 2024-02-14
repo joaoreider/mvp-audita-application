@@ -4,12 +4,13 @@ import Navbar from "@/components/navbar";
 import { ClimbingBoxLoader } from "react-spinners";
 
 import SubmitButton from "@/components/submit-button";
-import { SessionData } from "./lib/types";
 import { v4 as uuidv4 } from "uuid";
 
 import { FaUpload } from "react-icons/fa6";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+
+import axios from "axios";
 
 import {
   AlertDialog,
@@ -25,6 +26,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import FileItem from "@/components/file-item";
+import { useRouter } from "next/router";
 
 const formatDate = (date: Date) => {
   const day = date.getDate().toString().padStart(2, "0");
@@ -44,6 +46,12 @@ type FileUploaded = {
   status: Status;
 };
 
+type ReportData = {
+  columns: string[];
+  data: string[][];
+  index: string[];
+};
+
 export default function Home() {
   const UPLOAD_URL = process.env.NEXT_PUBLIC_BACKEND_BASE_URL + "/files/upload";
   // código da análise: data-hora-uuid  (ex: 01/01/2022-12:00|1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed)
@@ -53,6 +61,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
   const [canUpload, setCanUpload] = useState<boolean>(true);
+
+  const [reportData, setReportData] = useState<ReportData | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const maxFileSize = 5;
@@ -74,9 +84,23 @@ export default function Home() {
       return;
     }
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setAnalysisCode(formatDate(new Date()) + "|" + uuidv4());
+
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/files/process?analysis-code=${analysisCode}`
+    );
+    if (response.status !== 200) {
+      toast({
+        variant: "destructive",
+        description: "Erro ao processar arquivos. Tente novamente",
+      });
+      setLoading(false);
+      return;
+    }
+    handleResetAnalysis();
     setLoading(false);
+
+    const data = response.data;
+    console.log("Redirecting to report page with data: ", data);
   };
 
   useEffect(() => {
