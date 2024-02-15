@@ -1,7 +1,5 @@
 "use client";
 import Navbar from "@/components/navbar";
-import Report from "@/components/report";
-
 import { ClimbingBoxLoader } from "react-spinners";
 
 import SubmitButton from "@/components/submit-button";
@@ -28,6 +26,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import FileItem from "@/components/file-item";
 import { useRouter } from "next/router";
+import ReportPage from "@/components/reportPage";
 
 const formatDate = (date: Date) => {
   const day = date.getDate().toString().padStart(2, "0");
@@ -57,9 +56,15 @@ type FileUploaded = {
 };
 
 export type ReportData = {
-  columns: string[];
-  data: string[][];
-  index: string[];
+  descricao_da_proposta: string;
+  descricao_da_tabela: string;
+  laboratorio: string;
+  preco_da_proposta: number;
+  preco_da_tabela: number;
+  registro: number;
+  situacao_da_marca: string;
+  situacao_do_preco: string;
+  situacao_registro: string;
 };
 
 export default function Home() {
@@ -72,7 +77,7 @@ export default function Home() {
   const [uploadedFiles, setUploadedFiles] = useState<FileUploaded[]>([]);
   const [canUpload, setCanUpload] = useState<boolean>(true);
 
-  const [reportData, setReportData] = useState<ReportData | null>(null);
+  const [reportData, setReportData] = useState<ReportData[] | []>([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const maxFileSize = 5;
@@ -109,14 +114,21 @@ export default function Home() {
     handleResetAnalysis();
     setLoading(false);
 
-    const data = response.data;
+    const data = response.data as ReportData[];
+    if (data.length === 0) {
+      toast({
+        variant: "destructive",
+        description: "Algo deu errado na análise. Tente novamente.",
+      });
+      return;
+    }
     setReportData(data);
   };
 
   const handleResetAnalysis = () => {
     setAnalysisCode(formatDate(new Date()) + "|" + uuidv4());
     setUploadedFiles([]);
-    setReportData(null);
+    setReportData([]);
   };
 
   const handleDelete = (name: string) => {
@@ -227,7 +239,7 @@ export default function Home() {
     return (
       <main className="flex min-h-screen flex-col items-center m-0">
         <Navbar />
-        {reportData ? (
+        {reportData.length > 0 ? (
           <div className="w-full py-2 px-6">
             <Button
               variant="default"
@@ -239,12 +251,27 @@ export default function Home() {
             </Button>
           </div>
         ) : null}
-        <div className="w-full sm:w-1/2 md:w-1/3 flex flex-col items-center justify-center rounded-md border m-12 p-2  shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)]">
-          {reportData ? (
-            <div>
-              <Report data={reportData} />
+
+        {reportData.length > 0 ? (
+          <>
+            <div className="md:hidden"></div>
+            <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+              <div className="flex items-center justify-between space-y-2">
+                <div>
+                  <h2 className="text-2xl font-bold tracking-tight">
+                    Welcome back!
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Here&apos;s a list of your tasks for this month!
+                  </p>
+                </div>
+              </div>
+              <ReportPage data={reportData} />
             </div>
-          ) : (
+          </>
+        ) : (
+          //
+          <div className="flex flex-col w-full sm:w-1/2 md:w-1/3  items-center justify-center rounded-md border m-12 p-2  shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)]">
             <div className="container">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -329,18 +356,19 @@ export default function Home() {
                   })}
                 </div>
               </ScrollArea>
-            </div>
-          )}
-        </div>
+            </div>{" "}
+          </div>
+        )}
+
         <div className="flex flex-col">
-          {!reportData ? (
+          {!(reportData.length > 0) ? (
             <SubmitButton
               onClick={handleStartAnalysis}
               className="shadow-xl text-white font-semibold rounded-md px-4  py-6 w-48 m-2"
               text="COMEÇAR ANÁLISE"
             />
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground mt-10">
               Relatório emitido em:{" "}
               {prettifyDateTimeBrazilianFormat(new Date())}
             </p>
