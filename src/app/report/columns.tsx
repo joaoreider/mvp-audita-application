@@ -48,14 +48,6 @@ export const columns: ColumnDef<ReportData>[] = [
       }
     },
     filterFn: (row, id, value) => {
-      console.log(
-        "Entrei no filterFn, row: ",
-        row,
-        "id: ",
-        id,
-        "value: ",
-        value
-      );
       return value.includes(row.getValue(id));
     },
   },
