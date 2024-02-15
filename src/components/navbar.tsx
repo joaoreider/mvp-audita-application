@@ -2,9 +2,14 @@ import Logo from "/home/jp/Documentos/Projects/mvp-audita/mvp-audita-application
 import Image from "next/image";
 import { logout } from "@/app/lib/actions";
 import { Button } from "./ui/button";
+import { useState } from "react";
+import { LoadingSpinner } from "./spinner";
 export default function Navbar() {
+  const [isLoading, setIsLoading] = useState(false);
   const handleLogoutClick = async () => {
+    setIsLoading(true);
     await logout();
+    setIsLoading(false);
   };
   return (
     // border-b rounded-xl
@@ -24,7 +29,7 @@ export default function Navbar() {
       </div>
       <div className="flex-shrink-0">
         <Button onClick={handleLogoutClick} variant={"outline"}>
-          Sair
+          {isLoading ? <LoadingSpinner /> : "Sair"}
         </Button>
       </div>
     </nav>
