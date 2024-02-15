@@ -39,6 +39,15 @@ const formatDate = (date: Date) => {
   return `${day}-${month}-${year}T${hours}:${min}`;
 };
 
+function prettifyDateTimeBrazilianFormat(date: Date) {
+  let dia = date.getDate().toString().padStart(2, "0");
+  let mes = (date.getMonth() + 1).toString().padStart(2, "0"); // +1 pois no getMonth Janeiro começa com zero.
+  let ano = date.getFullYear();
+  let horas = date.getHours().toString().padStart(2, "0");
+  let minutos = date.getMinutes().toString().padStart(2, "0");
+  return dia + "/" + mes + "/" + ano + " às " + horas + ":" + minutos;
+}
+
 export type Status = "ok" | "pending" | "error";
 type FileUploaded = {
   name: string;
@@ -330,7 +339,12 @@ export default function Home() {
               className="shadow-xl text-white font-semibold rounded-md px-4  py-6 w-48 m-2"
               text="COMEÇAR ANÁLISE"
             />
-          ) : null}
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Relatório emitido em:{" "}
+              {prettifyDateTimeBrazilianFormat(new Date())}
+            </p>
+          )}
         </div>
       </main>
     );

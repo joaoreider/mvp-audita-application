@@ -6,7 +6,8 @@ import {
   FaFileCircleExclamation,
 } from "react-icons/fa6";
 import { Progress } from "./ui/progress";
-import { Status } from "./uploader";
+import { Status } from "@/app/page";
+
 interface FileItemProps {
   name: string;
   status: Status;
