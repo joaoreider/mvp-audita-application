@@ -47,6 +47,17 @@ export const columns: ColumnDef<ReportData>[] = [
           return <FaTriangleExclamation className="text-yellow-400 m-2" />;
       }
     },
+    filterFn: (row, id, value) => {
+      console.log(
+        "Entrei no filterFn, row: ",
+        row,
+        "id: ",
+        id,
+        "value: ",
+        value
+      );
+      return value.includes(row.getValue(id));
+    },
   },
   {
     header: "Registro",
