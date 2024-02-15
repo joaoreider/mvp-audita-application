@@ -9,7 +9,7 @@ import { FaUpload, FaArrowLeftLong } from "react-icons/fa6";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 import {
   AlertDialog,
@@ -25,7 +25,6 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import FileItem from "@/components/file-item";
-import { useRouter } from "next/router";
 import ReportPage from "@/components/reportPage";
 
 const formatDate = (date: Date) => {
@@ -100,35 +99,39 @@ export default function Home() {
     }
     setLoading(true);
 
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/files/process?analysis-code=${analysisCode}`
-    );
-    if (response.status !== 200) {
+    try {
+      const response: AxiosResponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/files/process?analysis-code=${analysisCode}`
+      );
+      setLoading(false);
+      const data = response.data as ReportData[];
+      if (data.length === 0) {
+        toast({
+          variant: "destructive",
+          description:
+            "Tivemos um problema ao processar os dados. Tente novamente.",
+          duration: 2000,
+        });
+        return;
+      }
+      handleResetAnalysis();
+      setReportData(data);
+    } catch (error) {
       toast({
         variant: "destructive",
-        description: "Erro ao processar arquivos. Tente novamente",
+        description: "Algo deu errado. Tente novamente mais tarde.",
+        duration: 2000,
       });
       setLoading(false);
       return;
     }
-    handleResetAnalysis();
-    setLoading(false);
-
-    const data = response.data as ReportData[];
-    if (data.length === 0) {
-      toast({
-        variant: "destructive",
-        description: "Algo deu errado na análise. Tente novamente.",
-      });
-      return;
-    }
-    setReportData(data);
   };
 
   const handleResetAnalysis = () => {
     setAnalysisCode(formatDate(new Date()) + "|" + uuidv4());
     setUploadedFiles([]);
     setReportData([]);
+    setLoading(false);
   };
 
   const handleDelete = (name: string) => {
