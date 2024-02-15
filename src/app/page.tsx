@@ -5,7 +5,12 @@ import { ClimbingBoxLoader } from "react-spinners";
 import SubmitButton from "@/components/submit-button";
 import { v4 as uuidv4 } from "uuid";
 
-import { FaUpload, FaArrowLeftLong } from "react-icons/fa6";
+import {
+  FaUpload,
+  FaArrowLeftLong,
+  FaCircleCheck,
+  FaRegCircleCheck,
+} from "react-icons/fa6";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
@@ -41,9 +46,11 @@ function prettifyDateTimeBrazilianFormat(date: Date) {
   let dia = date.getDate().toString().padStart(2, "0");
   let mes = (date.getMonth() + 1).toString().padStart(2, "0"); // +1 pois no getMonth Janeiro começa com zero.
   let ano = date.getFullYear();
-  let horas = date.getHours().toString().padStart(2, "0");
-  let minutos = date.getMinutes().toString().padStart(2, "0");
-  return dia + "/" + mes + "/" + ano + " às " + horas + ":" + minutos;
+  return dia + "/" + mes + "/" + ano;
+}
+
+function getCMEDTablePublishedDate(): string {
+  return "07/02/2024 às 09h30min";
 }
 
 export type Status = "ok" | "pending" | "error";
@@ -257,20 +264,24 @@ export default function Home() {
 
         {reportData.length > 0 ? (
           <>
-            <div className="md:hidden"></div>
-            <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
-              <div className="flex items-center justify-between space-y-2">
-                <div>
-                  <h2 className="text-2xl font-bold tracking-tight">
-                    Welcome back!
-                  </h2>
-                  <p className="text-muted-foreground">
-                    Here&apos;s a list of your tasks for this month!
-                  </p>
+            <div className="md">
+              <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex rounded-xl border-2 m-12  shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)]">
+                <div className="flex items-center justify-between space-y-2">
+                  <div className="flex flex-row  items-center">
+                    <h2 className="text-2xl font-semibold tracking-tight mr-2 ">
+                      Emissão concluída!
+                    </h2>
+                    <FaRegCircleCheck className="text-green-400 mr-2 h-8 w-8" />
+                  </div>
                 </div>
+                <ReportPage data={reportData} />
               </div>
-              <ReportPage data={reportData} />
             </div>
+            <p className="text-sm text-muted-foreground m-10 p-2">
+              Relatório emitido em:{" "}
+              {prettifyDateTimeBrazilianFormat(new Date())} com base na tabela
+              CMED publicada em {getCMEDTablePublishedDate()}.
+            </p>
           </>
         ) : (
           //
@@ -370,12 +381,7 @@ export default function Home() {
               className="shadow-xl text-white font-semibold rounded-md px-4  py-6 w-48 m-2"
               text="COMEÇAR ANÁLISE"
             />
-          ) : (
-            <p className="text-sm text-muted-foreground mt-10">
-              Relatório emitido em:{" "}
-              {prettifyDateTimeBrazilianFormat(new Date())}
-            </p>
-          )}
+          ) : null}
         </div>
       </main>
     );
