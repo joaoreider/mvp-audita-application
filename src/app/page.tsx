@@ -10,6 +10,7 @@ import {
   FaArrowLeftLong,
   FaCircleCheck,
   FaRegCircleCheck,
+  FaFileCircleCheck,
 } from "react-icons/fa6";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -31,6 +32,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import FileItem from "@/components/file-item";
 import ReportPage from "@/components/reportPage";
+import { downloadToExcel } from "@/lib/xlsx";
 
 const formatDate = (date: Date) => {
   const day = date.getDate().toString().padStart(2, "0");
@@ -267,11 +269,22 @@ export default function Home() {
             <div className="md">
               <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex rounded-xl border-2 m-12  shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)]">
                 <div className="flex items-center justify-between space-y-2">
-                  <div className="flex flex-row  items-center">
-                    <h2 className="text-2xl font-semibold tracking-tight mr-2 ">
-                      Emissão concluída!
-                    </h2>
-                    <FaRegCircleCheck className="text-green-400 mr-2 h-8 w-8" />
+                  <div className="flex flex-row  items-center justify-between w-full">
+                    <div className="flex flex-row items-center text-left">
+                      {" "}
+                      <h2 className="text-2xl font-semibold tracking-tight mr-2 ">
+                        Emissão concluída!
+                      </h2>
+                      <FaRegCircleCheck className="text-green-400 mr-2 h-8 w-8" />
+                    </div>
+                    <Button
+                      onClick={() => downloadToExcel(reportData)}
+                      variant={"default"}
+                      className="text-right"
+                    >
+                      Baixar relatório
+                      <FaFileCircleCheck className="ml-2 h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
                 <ReportPage data={reportData} />
