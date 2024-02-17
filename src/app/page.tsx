@@ -154,13 +154,13 @@ export default function Home() {
   ) => {
     handleDelete(file.name);
     setUploadedFiles((prev) => [
-      ...prev,
       {
         name: file.name,
         size: file.size,
         progress: progress,
         status: status,
       },
+      ...prev,
     ]);
   };
 
