@@ -2,8 +2,9 @@
 import React, { useState, ChangeEvent, useRef } from "react";
 import {
   FaRegTrashCan,
-  FaFileCircleCheck,
+  FaFile,
   FaFileCircleExclamation,
+  FaRegCircleCheck,
 } from "react-icons/fa6";
 import { Progress } from "./ui/progress";
 import { Status } from "@/app/page";
@@ -43,15 +44,15 @@ export default function FileItem({
   const showProgress = progress && progress < 100;
 
   const icons = {
-    ok: <FaFileCircleCheck className="text-green-success" />,
-    pending: <FaFileCircleCheck />,
+    ok: <FaFile className="text-white" />,
+    pending: <FaFile className="text-muted-foreground" />,
     error: <FaFileCircleExclamation className="text-red-400" />,
   };
 
   return (
-    <div className="flex flex-row items-center justify-between w-full max-w-[70%] px-4 py-2 border-2 rounded m-2">
+    <div className="flex flex-row items-center justify-between w-full max-w-[70%] px-4 py-2 border-2 rounded-md mb-2">
       <div className="flex items-center">
-        {icons[status] || <FaFileCircleCheck />}
+        {icons[status] || <FaFile className="text-muted-foreground" />}
       </div>
       {showProgress ? (
         <div className="flex items-center w-full  max-w-[40%]">
@@ -68,7 +69,7 @@ export default function FileItem({
 
       <div className="flex items-center">
         {status === "ok" ? (
-          <FaRegTrashCan className="text-muted-foreground" />
+          <FaRegCircleCheck className="text-green-success" />
         ) : (
           <FaRegTrashCan className="cursor-pointer" onClick={onDelete} />
         )}
