@@ -12,12 +12,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { login } from "../lib/actions";
 import { LoadingSpinner } from "@/components/spinner";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
 import Logo from "/home/jp/Documentos/Projects/mvp-audita/mvp-audita-application/public/logo.svg";
+import { signIn } from "next-auth/react";
+import { login, navigate } from "../lib/actions";
+import paths from "@/paths";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
@@ -37,20 +39,28 @@ export default function LoginPage() {
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     const { email, password } = values;
-    const result = await login(email, password);
-    setIsLoading(false);
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
     if (result?.error) {
-      result.error;
+      setIsLoading(false);
       toast({
         variant: "destructive",
-        description: result.error,
+        description: "Credenciais inválidas",
+        duration: 2500,
       });
       return;
     }
-    toast({
-      description: "Seja bem-vindo!",
-      duration: 700,
-    });
+    if (result?.ok) {
+      setIsLoading(false);
+      toast({
+        title: "Sucesso",
+        description: "Login efetuado com sucesso",
+      });
+      await navigate(paths.home);
+    }
   };
   return (
     <div className="flex min-h-screen max-h-screen flex-col items-center justify-center p-24">

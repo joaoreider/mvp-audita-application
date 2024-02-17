@@ -12,12 +12,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { register } from "../lib/actions";
+import { navigate } from "../lib/actions";
 import { LoadingSpinner } from "@/components/spinner";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
 import Logo from "/home/jp/Documentos/Projects/mvp-audita/mvp-audita-application/public/logo.svg";
+import { redirect } from "next/navigation";
+import paths from "@/paths";
 
 const formSchema = z
   .object({
@@ -47,15 +49,28 @@ export default function RegisterPage() {
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     const { passwordConfirm, ...data } = values;
-    const result = await register(data);
-    setIsLoading(false);
-    if (result?.error) {
-      if (result.error === "Usuário já cadastrado") {
-        form.setError("email", {
-          type: "manual",
-          message: "Email já cadastrado",
-        });
-        return;
+    const result = await fetch("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (result.ok) {
+      toast({
+        description: "Usuário cadastrado com sucesso",
+      });
+      await navigate(paths.login);
+    } else {
+      if (result) {
+        if (result.status === 409) {
+          form.setError("email", {
+            type: "manual",
+            message: "Email já cadastrado",
+          });
+          return;
+        }
       } else {
         toast({
           variant: "destructive",
@@ -65,9 +80,8 @@ export default function RegisterPage() {
         return;
       }
     }
-    toast({
-      description: "Usuário cadastrado com sucesso",
-    });
+
+    setIsLoading(false);
   };
   return (
     <div className="flex min-h-screen flex-col items-center justify-center  p-24">
