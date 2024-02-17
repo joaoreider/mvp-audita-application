@@ -366,36 +366,40 @@ export default function Home() {
 
         <div className="flex flex-col items-center">
           {!(reportData.length > 0) ? (
-            <SubmitButton
-              onClick={handleStartAnalysis}
-              className="shadow-xl text-white font-semibold rounded-md px-4  py-6 w-48 m-2"
-              text="COMEÇAR ANÁLISE"
-            />
+            <div>
+              <SubmitButton
+                onClick={handleStartAnalysis}
+                className="shadow-xl text-white font-semibold rounded-md px-4  py-6 w-48 m-2"
+                text="COMEÇAR ANÁLISE"
+              />
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="shadow-xl text-white rounded-md px-4  py-6 w-48 m-2"
+                  >
+                    REINICIAR
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Essa ação é definitiva e exclui todos os arquivos
+                      carregados.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleResetAnalysis}>
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           ) : null}
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="shadow-xl text-white rounded-md px-4  py-6 w-48 m-2"
-              >
-                REINICIAR
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Essa ação é definitiva e exclui todos os arquivos carregados.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleResetAnalysis}>
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
         </div>
       </main>
     );
