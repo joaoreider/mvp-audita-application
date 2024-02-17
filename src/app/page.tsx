@@ -300,29 +300,6 @@ export default function Home() {
           //
           <div className="flex flex-col w-full sm:w-1/2 md:w-1/3  items-center justify-center rounded-md border m-12 p-2  shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)]">
             <div className="container">
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="outline" className="my-1">
-                    Nova análise
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Essa ação é definitiva e exclui todos os arquivos
-                      carregados.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleResetAnalysis}>
-                      Continue
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-
               <div className="wrapper">
                 <form
                   action="#"
@@ -334,7 +311,7 @@ export default function Home() {
                   >
                     <div className="flex flex-col items-center text-center justify-center pt-5 pb-6">
                       <FaUpload size={42} color="white" className="mb-4" />
-                      {canUpload ? (
+                      {uploadedFiles.length < 5 ? (
                         <span className="leading-7  text-muted-foreground">
                           Faça o upload de até{" "}
                           {5 - uploadedFiles.length === 1
@@ -356,14 +333,14 @@ export default function Home() {
                       multiple={false}
                       className="hidden"
                       ref={fileInputRef}
-                      disabled={!canUpload}
+                      disabled={!(uploadedFiles.length < 5)}
                       accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     />
                   </label>
                 </form>
               </div>
 
-              <ScrollArea className="w-full px-10">
+              <ScrollArea className="w-full px-10 ">
                 <div className="flex flex-col overflow-y-auto max-h-[400px] p-2 w-full items-center justify-center">
                   {uploadedFiles.map((file, index) => {
                     return (
@@ -387,7 +364,7 @@ export default function Home() {
           </div>
         )}
 
-        <div className="flex flex-col">
+        <div className="flex flex-col items-center">
           {!(reportData.length > 0) ? (
             <SubmitButton
               onClick={handleStartAnalysis}
@@ -395,6 +372,30 @@ export default function Home() {
               text="COMEÇAR ANÁLISE"
             />
           ) : null}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="shadow-xl text-white rounded-md px-4  py-6 w-48 m-2"
+              >
+                REINICIAR
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Essa ação é definitiva e exclui todos os arquivos carregados.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleResetAnalysis}>
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </main>
     );

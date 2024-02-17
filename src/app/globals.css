@@ -62,10 +62,10 @@
   }
 
   .wrapper {
-    @apply w-full items-center justify-center p-2.5 rounded-[5px];
+    @apply w-full items-center justify-center px-1 py-0 rounded-[5px];
   }
 
   .wrapper form {
-    @apply h-[167px] flex items-center justify-center flex-col mx-0 my-[30px] rounded-[5px] border-2 border-dashed hover:bg-slate-900;
+    @apply h-[167px] flex items-center justify-center flex-col mx-0 my-[20px] rounded-[5px] border-2 border-dashed hover:bg-slate-900;
   }
 }
