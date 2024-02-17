@@ -1,11 +1,7 @@
-import { db } from "@/db";
-import type { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-// Prisma will help handle and catch errors
-import { Prisma } from "@prisma/client";
-import { NextApiRequest, NextApiResponse } from "next";
-import { findByEmail } from "../register/route";
+import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
+import { findByEmail } from "../utils";
 
 async function handle(req: Request, res: NextApiResponse) {
   if (req.method === "POST") {

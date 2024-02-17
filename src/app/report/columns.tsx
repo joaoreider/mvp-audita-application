@@ -1,6 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ReportData } from "../page";
+import { ReportData } from "../home/home";
 
 import {
   HoverCard,

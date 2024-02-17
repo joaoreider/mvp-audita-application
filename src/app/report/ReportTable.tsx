@@ -1,7 +1,7 @@
 import React from "react";
 import ReportDataTable from "./data-table";
 import { columns } from "./columns";
-import { ReportData } from "../page";
+import { ReportData } from "../home/home";
 
 type Props = {
   data: ReportData[];

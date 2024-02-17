@@ -1,14 +1,16 @@
 import Logo from "/home/jp/Documentos/Projects/mvp-audita/mvp-audita-application/public/logo.svg";
 import Image from "next/image";
-import { logout } from "@/app/lib/actions";
+import { navigate } from "@/app/lib/actions";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { LoadingSpinner } from "./spinner";
+import { signOut } from "next-auth/react";
+import paths from "@/paths";
 export default function Navbar() {
   const [isLoading, setIsLoading] = useState(false);
-  const handleLogoutClick = async () => {
+  const handleLogoutClick = () => {
     setIsLoading(true);
-    await logout();
+    signOut();
     setIsLoading(false);
   };
   return (

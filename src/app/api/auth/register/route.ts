@@ -1,10 +1,8 @@
 import { db } from "@/db";
-import type { User } from "@prisma/client";
 import * as bcrypt from "bcrypt";
-// Prisma will help handle and catch errors
-import { Prisma } from "@prisma/client";
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
+import { findByEmail } from "../utils";
 
 interface RegisterBody {
   name: string;
@@ -57,15 +55,6 @@ async function createUserHandler(body: RegisterBody) {
   } catch (e) {
     throw e;
   }
-}
-
-export async function findByEmail(email: string): Promise<User | null> {
-  const user = await db.user.findUnique({
-    where: {
-      email,
-    },
-  });
-  return user;
 }
 
 export const POST = handle;

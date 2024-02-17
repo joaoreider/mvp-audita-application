@@ -1,5 +1,5 @@
-import { ReportData } from "@/app/page";
-import ReportTable from "@/app/report/page";
+import { ReportData } from "@/app/home/home";
+import ReportTable from "@/app/report/ReportTable";
 
 export interface ReportPageProps {
   data: ReportData[];

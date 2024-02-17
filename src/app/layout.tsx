@@ -3,6 +3,11 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { SessionProvider, signOut } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Logout from "./api/auth/logout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,7 +16,7 @@ export const metadata: Metadata = {
   description: "Audita - Auditoria de licitações públicas",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

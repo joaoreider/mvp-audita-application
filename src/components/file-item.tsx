@@ -7,7 +7,7 @@ import {
   FaRegCircleCheck,
 } from "react-icons/fa6";
 import { Progress } from "./ui/progress";
-import { Status } from "@/app/page";
+import { Status } from "@/app/home/home";
 
 interface FileItemProps {
   name: string;
