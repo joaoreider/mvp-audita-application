@@ -5,6 +5,7 @@ import paths from "@/paths";
 
 export default async function LoginPage() {
   const session = await getServerSession();
+  console.log("Session loaded!");
   if (session) {
     redirect(paths.home);
   }
