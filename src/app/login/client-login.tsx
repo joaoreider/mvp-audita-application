@@ -56,11 +56,11 @@ export default function ClientLogin() {
       return;
     }
     if (result?.ok) {
-      setIsLoading(false);
       toast({
         title: "Login efetuado!",
         description: "Redirecionando para a página inicial",
       });
+      setIsLoading(false);
       router.push(paths.home);
       router.refresh();
     }
