@@ -16,7 +16,7 @@ import { LoadingSpinner } from "@/components/spinner";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
-import Logo from "/home/jp/Documentos/Projects/mvp-audita/mvp-audita-application/public/logo.svg";
+import Logo from "/public/logo.svg";
 import { signIn } from "next-auth/react";
 import { navigate } from "../lib/actions";
 import paths from "@/paths";

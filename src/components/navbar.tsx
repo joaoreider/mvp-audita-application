@@ -1,4 +1,4 @@
-import Logo from "/home/jp/Documentos/Projects/mvp-audita/mvp-audita-application/public/logo.svg";
+import Logo from "/public/logo.svg";
 import Image from "next/image";
 import { navigate } from "@/app/lib/actions";
 import { Button } from "./ui/button";
